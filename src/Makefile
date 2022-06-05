@@ -371,7 +371,7 @@ endif
 
 # redis-server
 $(REDIS_SERVER_NAME): $(REDIS_SERVER_OBJ)
-	$(REDIS_LD) -o $@ $^ ../deps/hiredis/libhiredis.a ../deps/lua/src/liblua.a ../deps/hdr_histogram/libhdrhistogram.a $(FINAL_LIBS)
+	LD_PRELOAD=/home/dan/workspace/licenta/ota-allocator/tests_c/../target/release/libota_allocator.so LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/dan/workspace/licenta/ota-allocator/tests_c/../target/release $(REDIS_LD) -o $@ $^ ../deps/hiredis/libhiredis.a ../deps/lua/src/liblua.a ../deps/hdr_histogram/libhdrhistogram.a $(FINAL_LIBS) -L/home/dan/workspace/licenta/ota-allocator/tests_c/../target/release  -lota_allocator -lpthread -Wl,--no-as-needed -ldl
 
 # redis-sentinel
 $(REDIS_SENTINEL_NAME): $(REDIS_SERVER_NAME)
@@ -400,7 +400,7 @@ DEP = $(REDIS_SERVER_OBJ:%.o=%.d) $(REDIS_CLI_OBJ:%.o=%.d) $(REDIS_BENCHMARK_OBJ
 # building it should complete before building any other object. Instead of
 # depending on a single artifact, build all dependencies first.
 %.o: %.c .make-prerequisites
-	$(REDIS_CC) -MMD -o $@ -c $<
+	LD_PRELOAD=/home/dan/workspace/licenta/ota-allocator/tests_c/../target/release/libota_allocator.so LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/dan/workspace/licenta/ota-allocator/tests_c/../target/release $(REDIS_CC) -MMD -o $@ -c $< -L/home/dan/workspace/licenta/ota-allocator/tests_c/../target/release  -lota_allocator -lpthread -Wl,--no-as-needed -ldl
 
 # The file commands.c is checked in and doesn't normally need to be rebuilt. It
 # is built only if python is available and its prereqs are modified.
